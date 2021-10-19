@@ -1,6 +1,7 @@
 package application_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -9,16 +10,43 @@ import (
 	mock_application "github.com/tiago123456789/study-hexagonal-architecture-usgin-golang/application/mocks"
 )
 
-func TestProductService_Get(t *testing.T) {
+func TestProduct_Get(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	product := mock_application.NewMockProductInterface(ctrl)
 	persistence := mock_application.NewMockProductPersistenceInterface(ctrl)
-	persistence.EXPECT().Get(gomock.Any()).Return(product, nil).AnyTimes()
-	service := application.ProductService{Persistence: persistence}
+	persistence.EXPECT().Get(gomock.Any()).Return(product, nil).Times(1)
 
-	result, err := service.Get("abc")
+	productService := application.ProductService{
+		Persistence: persistence,
+	}
+
+	_, err := productService.Get("1")
 	require.Nil(t, err)
-	require.Equal(t, product, result)
+	persistence.EXPECT().Get(gomock.Any()).Return(nil, errors.New("Error")).Times(1)
+	_, err = productService.Get("1")
+	require.Error(t, err)
+}
+
+func TestProduct_Create(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	product := mock_application.NewMockProductInterface(ctrl)
+	product.EXPECT().IsValid().Return(false, errors.New("")).AnyTimes()
+
+	persistence := mock_application.NewMockProductPersistenceInterface(ctrl)
+	persistence.EXPECT().Save(gomock.Any()).Return(nil, errors.New("")).AnyTimes()
+	productService := application.ProductService{
+		Persistence: persistence,
+	}
+
+	_, err := productService.Create("ps5", 5000)
+	require.Error(t, err)
+
+	product.EXPECT().IsValid().Return(true, nil).AnyTimes()
+	_, err = productService.Create("ps5", 5000)
+	require.Error(t, err)
+
 }
