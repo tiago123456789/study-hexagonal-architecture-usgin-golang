@@ -8,3 +8,22 @@ services:
       - "9000:9000"
     volumes:
       - .:/go/src/
+
+  database:
+    image: postgres:10.18
+    ports: 
+      - 5432:5432
+    restart: always
+    environment: 
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com.br"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    ports:
+      - "8585:80"
+    depends_on:
+      - database
