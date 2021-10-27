@@ -21,7 +21,6 @@ func (p *ProductDb) Get(id string) (application.ProductInterface, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("ID => %s", id)
 	err = stmt.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price, &product.Status)
 	if err != nil {
 		return nil, err

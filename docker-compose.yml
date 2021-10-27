@@ -6,8 +6,9 @@ services:
     container_name: appproduct
     ports:
       - "9000:9000"
+      - "3000:3000"
     volumes:
-      - .:/go/src/
+      - ./:/go/src/
 
   database:
     image: postgres:10.18

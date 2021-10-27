@@ -23,8 +23,6 @@ type ProductInterface interface {
 type ProductServiceInterface interface {
 	Get(id string) (ProductInterface, error)
 	Create(name string, price float64) (ProductInterface, error)
-	Enable(product ProductInterface) (ProductInterface, error)
-	Disable(product ProductInterface) (ProductInterface, error)
 }
 
 type ProductReader interface {
@@ -46,10 +44,10 @@ const (
 )
 
 type Product struct {
-	ID     string  `valid:"uuidv4"`
-	Name   string  `valid:"required"`
-	Price  float64 `valid:"float"`
-	Status string  `valid:"required"`
+	ID     string  `valid:"uuidv4" json:"id"`
+	Name   string  `valid:"required" json:"name"`
+	Price  float64 `valid:"float" json:"price"`
+	Status string  `valid:"required" json:"status"`
 }
 
 func (p *Product) IsValid() (bool, error) {
